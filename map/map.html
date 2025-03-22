@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crime Reports Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+<body>
+    <div id="map" style="height: 500px;"></div>
+
+    <script>
+        const map = L.map('map').setView([17.3850, 78.4867], 13); // Default location: Hyderabad
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        function addMarkerToMap(report) {
+            if (report.lat && report.lon) {
+                const marker = L.marker([report.lat, report.lon]).addTo(map);
+                marker.bindPopup(`
+                    <h3>${report.crimeType}</h3>
+                    <p><strong>Description:</strong> ${report.description}</p>
+                    <p><strong>Location:</strong> ${report.location}</p>
+                    <p><strong>Date & Time:</strong> ${report.datetime}</p>
+                    <p><strong>Status:</strong> ${report.status}</p>
+                `);
+            }
+        }
+
+        const reports = [
+            {
+                crimeType: 'Robbery',   
+                description: 'Robbery in the street',
+                location: 'Hyderabad',
+                datetime: '2020-12-01 10:00:00',
+                status: 'Pending',
+                lat: 17.3850,
+                lon: 18.4867    
+            },
+            {
+                crimeType: 'Theft',   
+                description: 'Theft in the house',
+                location: 'Hyderabad',
+                datetime: '2020-12-01 10:00:00',
+                status: 'Pending',
+                lat: 16.3950,
+                lon: 78.4867    
+            }
+        ];
+
+        // Add markers to the map
+        reports.forEach(report => addMarkerToMap(report));
+
+        function fitMapToMarkers() {
+            const bounds = [];
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker) {
+                    bounds.push(layer.getLatLng());
+                }
+            });
+            if (bounds.length > 0) {
+                map.fitBounds(bounds);
+            }
+        }
+
+        // Adjust map view to fit all markers
+        fitMapToMarkers();
+    </script>
+</body>
+</html>
