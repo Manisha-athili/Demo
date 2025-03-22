@@ -11,12 +11,19 @@
 
 
     <script>
-        if("notification" in window){
-            console.log("supported")
+        const checkPermission = () => {
+            if (!('serviceWorker' in navigator)){
+                throw new Error("No suppoert for service worker")
+        }}
+
+        const registerSW = async () => {
+            const registration = await navigator.serviceWorker.register('sw.js');
+            return registration
         }
-        else{
-            console.error("not suppoerted")
-        }
+
+        checkPermission()
+        registerSW()
     </script>
+    <script type="module" src="sw.js"></script>
 </body>
 </html>
